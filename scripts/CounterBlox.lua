@@ -1,3 +1,7 @@
+--[[
+Made by Pawel12d#0272
+--]]
+
 local Hint = Instance.new("Hint", game.CoreGui)
 Hint.Text = "Hexagon | Waiting for the game to load..."
 
@@ -10,20 +14,20 @@ Hint.Text = "Hexagon | Setting up environment..."
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
--- Environment
+-- Environment 
 local getrawmetatable = getrawmetatable or false
-local http_request = http_request or request or (http and http.request) or (syn and syn.request) or false
 local mousemove = mousemove or mousemoverel or mouse_move or false
 local getsenv = getsenv or false
 local listfiles = listfiles or listdir or syn_io_listdir or false
 local isfolder = isfolder or false
+local hookfunc = hookfunc or hookfunction or replaceclosure or false
 
 if (getrawmetatable == false) then return game.Players.LocalPlayer:Kick("Exploit not supported! Missing: getrawmetatable.") end
-if (http_request == false) then return game.Players.LocalPlayer:Kick("Exploit not supported! Missing: request.") end
 if (mousemove == false) then return game.Players.LocalPlayer:Kick("Exploit not supported! Missing: mousemove.") end
 if (getsenv == false) then return game.Players.LocalPlayer:Kick("Exploit not supported! Missing: getsenv.") end
 if (listfiles == false) then return game.Players.LocalPlayer:Kick("Exploit not supported! Missing: listfiles.") end
 if (isfolder == false) then return game.Players.LocalPlayer:Kick("Exploit not supported! Missing: isfolder.") end
+if (hookfunc == false) then return game.Players.LocalPlayer:Kick("Exploit not supported! Missing: hookfunc.") end
 
 Hint.Text = "Hexagon | Setting up configuration settings..."
 
@@ -50,6 +54,12 @@ end
 if not isfile("hexagon/custom_models.txt") then
 	print("downloading hexagon custom models file")
 	writefile("hexagon/custom_models.txt", game:HttpGet("https://raw.githubusercontent.com/Pawel12d/hexagon/main/scripts/default_data/custom_models.txt"))
+elseif readfile("hexagon/custom_models.txt"):find("Clone") then
+	local str = readfile("hexagon/custom_models.txt")
+	str = str:gsub([[game.ReplicatedStorage.Viewmodels["v_C4Halloween"]:Clone()]], [[game.ReplicatedStorage.Viewmodels:FindFirstChild("v_C4Halloween")]])
+	str = str:gsub([[game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"]:Clone()]], [[game.ReplicatedStorage.Viewmodels:FindFirstChild("v_oldM4A1-S")]])
+	writefile("hexagon/custom_models.txt", str)
+	print("exodus winning $$$")
 end
 
 if not isfile("hexagon/inventories.txt") then
@@ -410,6 +420,7 @@ local function AddCustomSkin(tbl)
 				newvalue.Parent = newfolder
 			end
 		end
+		
 		table.insert(nocw_s, {tostring(tbl.weaponname.."_"..tbl.skinname)})
 			
 		print("Custom skin: "..tostring(tbl.weaponname.."_"..tbl.skinname).." successfully injected!")
@@ -422,7 +433,7 @@ local function AddCustomModel(tbl)
 			game.ReplicatedStorage.Viewmodels["v_"..tbl.modelname]:Destroy()
 		end
 		
-		newmodel = tbl.model
+		newmodel = tbl.model:Clone()
 		newmodel.Name = "v_"..tbl.modelname
 		newmodel.Parent = game.ReplicatedStorage.Viewmodels
 		
@@ -1040,7 +1051,8 @@ local a,b = pcall(function()
 end)
 
 if not a then
-	game.Players.LocalPlayer:Kick("Hexagon | Your custom models file is fucked up lol!")
+	print(a, b)
+	game.Players.LocalPlayer:Kick("Hexagon | Your custom models file is fucked up lol! "..b)
 end
 
 MiscellaneousTabCategoryMain:AddDropdown("Inventory Changer", TableToNames(Inventories), "-", "MiscellaneousTabCategoryMainInventoryChanger", function(val)
@@ -1060,24 +1072,23 @@ MiscellaneousTabCategoryMain:AddDropdown("Inventory Changer", TableToNames(Inven
 			for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
 				if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
 					table.insert(AllSkinsTable, {v.Name.."_Stock"})
-					for i,c in pairs(v:GetChildren()) do
-						if c.Name ~= "Stock" then
-							table.insert(AllSkinsTable, {v.Name.."_"..c.Name})
+					
+					for i2,v2 in pairs(v:GetChildren()) do
+						if v2.Name ~= "Stock" then
+							table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
 						end
 					end
 				end
 			end
 			
 			for i,v in pairs(game.ReplicatedStorage.Gloves:GetChildren()) do
-				if v:FindFirstChild("Type") then
-					local GloveType = (v.Type.Value == "Straps" and "Strapped Glove") or (v.Type.Value == "Wraps" and "Handwraps") or (v.Type.Value == "Sports" and "Sports Glove") or (v.Type.Value == "Fingerless" and "Fingerless Glove")
-						
-					if GloveType then
-						table.insert(AllSkinsTable, {GloveType.."_"..v.Name})
+				if v:IsA("Folder") and v.Name ~= "Models" then
+					for i2,v2 in pairs(v:GetChildren()) do
+						table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
 					end
 				end
 			end
-
+			
 			cbClient.CurrentInventory = AllSkinsTable
 		end
 	end
@@ -1438,7 +1449,7 @@ MiscellaneousTabCategoryGrenade:AddKeybind("Keybind", nil, "MiscellaneousTabCate
 			nil,
 			25,
 			35,
-			(game.Players.LocalPlayer:GetMouse().Hit.Position - game.Players.LocalPlayer.Character.Head.Position) * library.pointers.MiscellaneousTabCategoryGrenadeVelocity.value,
+			workspace.CurrentCamera.CFrame.lookVector * (5 * library.pointers.MiscellaneousTabCategoryGrenadeVelocity.value),
 			nil,
 			nil
 		)
@@ -1520,7 +1531,7 @@ SettingsTabCategoryMain:AddButton("Server Rejoin", function()
 end)
 
 SettingsTabCategoryMain:AddButton("Copy Discord Invite", function()
-	setclipboard("https://discord.gg/47YH2Ay")
+	setclipboard("https://discord.gg/FdrQZ6sD5T")
 end)
 
 SettingsTabCategoryMain:AddButton("Copy Roblox Game Invite", function()
@@ -2194,6 +2205,7 @@ if readfile("hexagon/autoload.txt") ~= "" and isfile("hexagon/configs/"..readfil
 end
 
 print("Hexagon finished loading!")
+print("101 120 111 100 117 115") -- :)
 
 Hint.Text = "Hexagon | Loading finished!"
 wait(1.5)

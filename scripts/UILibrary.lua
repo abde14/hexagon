@@ -156,9 +156,9 @@ local library = {
     pointers = {},
     settings = {
         guiname = "Hexagon",
-		title = "Hexagon",
+		title = "Hexagon [Exodus Edition]",
 		logo = "rbxassetid://4350178803", -- "http://www.roblox.com/asset/?id=6597976562",
-        footer = " wassup",
+        footer = " Exodus Winning $$$",
         modal = true,
         font = Enum.Font.SourceSans,
         textsize = 16,
@@ -397,6 +397,7 @@ function library:CreateWindow(csize, cpos)
 		AnchorPoint = Vector2.new(0.5,0.5),
         Image = "rbxassetid://165689900",
 		Name = "Pointer",
+		Visible = false,
 		Parent = self.base
 	})
 	

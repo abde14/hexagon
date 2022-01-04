@@ -1,11 +1,11 @@
 {{
 	weaponname = "Halloween C4",
 	modelname = "C4",
-	model = game.ReplicatedStorage.Viewmodels["v_C4Halloween"]:Clone()
+	model = game.ReplicatedStorage.Viewmodels:FindFirstChild("v_C4Halloween")
 },{
 	weaponname = "Old M4A1",
 	modelname = "M4A1",
-	model = game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"]:Clone()
+	model = game.ReplicatedStorage.Viewmodels:FindFirstChild("v_oldM4A1-S")
 },{
 	weaponname = "Old Scout",
 	modelname = "Scout",
@@ -38,8 +38,4 @@
 	weaponname = "Old Flip Knife",
 	modelname = "Flip Knife",
 	model = game:GetObjects("rbxassetid://6587879507")[1]["Flip Knife"]
-},{
-	weaponname = "Crewmate",
-	modelname = "Bayonet",
-	model = game:GetObjects("rbxassetid://6500791405")[1]
 }}
